@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clear Rules Cyber Security: plain AI rules for small Edmonton offices</title>
+<meta name="description" content="Written rules for how your staff use AI tools, kept current, with a dated record you can show. For small Edmonton offices. Start with the free 10-minute AI Check.">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f5e4a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{--ink:#1d2733;--muted:#56616e;--accent:#1f5e4a;--accent-d:#174a3a;--soft:#eef5f1;--line:#dde4e1;--bg:#fff;--paper:#f8faf9}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 22px}
+a{color:var(--accent)}
+a:focus-visible,.btn:focus-visible{outline:3px solid #f0b429;outline-offset:3px}
+.skip{position:absolute;left:-999px;top:8px;background:#fff;padding:8px 12px}
+.skip:focus{left:8px;z-index:10}
+header.top{border-bottom:1px solid var(--line);background:rgba(255,255,255,.96)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 22px;max-width:980px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand b{font-size:1.06rem;letter-spacing:-.01em}
+.brand span{display:block;font-size:.78rem;color:var(--muted);font-weight:500;margin-top:-3px}
+nav{display:none;gap:22px}
+nav a{text-decoration:none;color:var(--ink);font-size:.95rem}
+nav a:hover{color:var(--accent)}
+h1{font-size:2.05rem;line-height:1.18;letter-spacing:-.02em;margin:0 0 .5em;max-width:20ch}
+h2{font-size:1.55rem;line-height:1.25;letter-spacing:-.01em;margin:0 0 .6em}
+h3{font-size:1.08rem;margin:0 0 .3em}
+section{padding:64px 0}
+section.alt{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.hero{padding:72px 0 64px;background:linear-gradient(180deg,var(--soft),#fff 85%)}
+.lead{font-size:1.15rem;color:#2c3743;max-width:40em;margin:0 0 1.6em}
+.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;font-weight:700;color:var(--accent);margin:0 0 .8em}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:650;padding:13px 22px;border-radius:10px;border:2px solid var(--accent)}
+.btn:hover{background:var(--accent-d);border-color:var(--accent-d)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.ghost:hover{background:var(--soft)}
+.note{color:var(--muted);font-size:.92rem;margin-top:1.1em}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:18px}
+.steps li{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px}
+.num{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:700;margin-bottom:10px}
+.steps p,.card p{margin:.2em 0 0;color:#38434f}
+.tag{display:inline-block;font-size:.78rem;font-weight:700;color:var(--accent);background:var(--soft);border-radius:99px;padding:2px 10px;margin-left:6px;vertical-align:2px}
+.grid2{display:grid;gap:28px}
+.ticks{list-style:none;padding:0;margin:0}
+.ticks li{position:relative;padding:7px 0 7px 30px;border-bottom:1px solid var(--line)}
+.ticks li:last-child{border-bottom:0}
+.ticks li::before{content:"";position:absolute;left:2px;top:13px;width:16px;height:16px;border-radius:50%;background:var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3l2.2 2.2 4.8-4.8' fill='none' stroke='%231f5e4a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat}
+.price{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px}
+.price .big{font-size:2.2rem;font-weight:750;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+.price .big small{font-size:1rem;font-weight:500;color:var(--muted)}
+.price table{width:100%;border-collapse:collapse;margin-top:14px;font-size:.95rem}
+.price th{font-weight:500;color:#38434f;padding-right:12px}
+.price th,.price td{text-align:left;padding:10px 0;border-top:1px solid var(--line);vertical-align:top}
+.price td:last-child{text-align:right;white-space:nowrap;font-weight:600}
+.never{margin-top:18px;padding:14px 16px;border-left:4px solid var(--accent);background:var(--soft);border-radius:0 10px 10px 0;font-size:.95rem}
+.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;list-style:none;padding:0;margin:0 0 14px}
+.who li{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-weight:600}
+.who li span{display:block;font-weight:400;color:var(--muted);font-size:.9rem}
+details{border-bottom:1px solid var(--line);padding:14px 0}
+details:first-of-type{border-top:1px solid var(--line)}
+summary{cursor:pointer;font-weight:650;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--accent);font-weight:700;font-size:1.2rem;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:.6em 0 0;color:#38434f}
+.contact{background:var(--accent);color:#fff;border-radius:18px;padding:36px 28px}
+.contact h2{color:#fff}
+.contact p{color:#e3efe9}
+.contact a.mail{color:#fff;font-weight:700;font-size:1.15rem;word-break:break-all}
+.contact .btn{background:#fff;color:var(--accent);border-color:#fff}
+.contact .btn:hover{background:var(--soft)}
+.contact .btn.ghost{background:transparent;color:#fff;border-color:#cfe3d9}
+.contact .btn.ghost:hover{background:rgba(255,255,255,.1)}
+.terms ol{padding-left:1.2em;margin:0}
+.terms li{margin:0 0 .7em;color:#38434f;font-size:.95rem}
+.terms li b{color:var(--ink)}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:.9rem}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+footer a{color:var(--muted)}
+@media (min-width:760px){
+ body{font-size:18px}
+ h1{font-size:2.9rem}
+ h2{font-size:1.85rem}
+ section{padding:88px 0}
+ .hero{padding:96px 0 72px}
+ nav{display:flex}
+ .steps{grid-template-columns:repeat(3,1fr)}
+ .grid2{grid-template-columns:1.15fr .85fr;align-items:start;gap:40px}
+ .contact{padding:48px 52px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+ <div class="bar">
+  <a class="brand" href="#top" aria-label="Clear Rules Cyber Security, home">
+   <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true" focusable="false"><rect width="34" height="34" rx="8" fill="#1f5e4a"/><path d="M9.5 9.5h15M9.5 14.5h10" stroke="#cfe3d9" stroke-width="2.4" stroke-linecap="round"/><path d="M10 21.5l4 4 9-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <div><b>Clear Rules</b><span>Cyber Security</span></div>
+  </a>
+  <nav aria-label="Main">
+   <a href="#how">How it works</a><a href="#kit">The Kit</a><a href="#faq">FAQ</a><a href="#contact">Contact</a>
+  </nav>
+ </div>
+</header>
+
+<main id="main">
+<section class="hero" id="top">
+ <div class="wrap">
+  <p class="eyebrow">For small Edmonton offices · 2 to 25 people</p>
+  <h1>Plain, written rules for how your staff use AI.</h1>
+  <p class="lead">Clear Rules helps small offices set written rules for tools like ChatGPT and Copilot, keep them current as those tools change, and keep a dated record you can show when a client or insurer asks.</p>
+  <div class="cta">
+   <a class="btn" href="AI-Check.pdf" download>Get the free 10-minute AI Check (PDF)</a>
+   <a class="btn ghost" href="#how">How it works</a>
+  </div>
+  <p class="note">18 yes/no questions. No sign-up, no login, nothing to install. We never see your answers.</p>
+ </div>
+</section>
+
+<section id="how">
+ <div class="wrap">
+  <h2>How it works</h2>
+  <ol class="steps">
+   <li><span class="num" aria-hidden="true">1</span><h3>Take the AI Check <span class="tag">Free</span></h3><p>Ten minutes with 18 yes/no questions for the owner or office manager. You end up with your own short gap list.</p></li>
+   <li><span class="num" aria-hidden="true">2</span><h3>Get your top 3 fixes <span class="tag">Free</span></h3><p>Email us just the question numbers, with no client or staff details. Within 2 business days we reply with the three things we'd do first, and you can do them yourself.</p></li>
+   <li><span class="num" aria-hidden="true">3</span><h3>Starter Kit <span class="tag">If you want help</span></h3><p>We write your rules, staff materials and first dated record, by email, within 10 business days of your intake. You review, ask for one round of changes, and approve.</p></li>
+  </ol>
+ </div>
+</section>
+
+<section class="alt" id="kit">
+ <div class="wrap grid2">
+  <div>
+   <h2>What's in the Starter Kit</h2>
+   <ul class="ticks">
+    <li>Your written AI-use policy, which you approve</li>
+    <li>A one-page summary for staff</li>
+    <li>3 tool cards for the AI tools your office uses</li>
+    <li>"What's switched on" cards for Microsoft 365 or Google Workspace, so you can check the settings yourself</li>
+    <li>A short staff training video</li>
+    <li>A 5-question quiz and a sign-off sheet</li>
+    <li>3 ready-to-forward emails to roll it out to staff</li>
+    <li>Your first dated record: policy version and sign-offs</li>
+    <li>30 days of email questions (up to 3 threads)</li>
+   </ul>
+  </div>
+  <div class="price" aria-labelledby="price-h">
+   <h3 id="price-h">Pricing</h3>
+   <div class="big">CA$490 <small>one time</small></div>
+   <p class="note" style="margin-top:.4em">Founding price for our first 3 offices.</p>
+   <table>
+    <tr><th scope="row">Policy Upgrade (you already have a policy)</th><td>CA$390</td></tr>
+    <tr><th scope="row">Standard Starter Kit, up to 15 staff</th><td>CA$890</td></tr>
+    <tr><th scope="row">Starter Kit, 16 to 25 staff</th><td>CA$1,180</td></tr>
+    <tr><th scope="row">Keep it current (optional monthly plan)</th><td>from CA$49/mo</td></tr>
+   </table>
+   <p class="note">Paid up front. No GST charged (we're not GST-registered). Full refund if you won't approve the draft after one round of changes.</p>
+  </div>
+ </div>
+ <div class="wrap">
+  <p class="never"><b>What we never do:</b> log in to your systems, install software, monitor your staff, or fill in insurance or client forms for you. You stay in charge.</p>
+ </div>
+</section>
+
+<section id="who">
+ <div class="wrap">
+  <h2>Who it's for</h2>
+  <p class="lead" style="margin-bottom:1.2em">Small Edmonton-area offices whose staff handle client information every day.</p>
+  <ul class="who">
+   <li>Accountants &amp; bookkeepers<span>Tax, payroll and banking details</span></li>
+   <li>Law firms<span>Confidential client files</span></li>
+   <li>Insurance brokers<span>Policy and personal details</span></li>
+   <li>Property managers<span>Owner data and vendor payments</span></li>
+   <li>Small nonprofits<span>Member and family information</span></li>
+  </ul>
+  <p class="note">We don't work with health offices (clinics, dental, medical). Health information follows different rules.</p>
+ </div>
+</section>
+
+<section class="alt" id="about">
+ <div class="wrap" style="max-width:720px;margin:0 auto">
+  <h2>About</h2>
+  <p>Clear Rules Cyber Security is run by Branden Troutman in Edmonton, Alberta. The work is done by email, in plain language, and sized for offices without an IT department. Every message and document is reviewed by Branden before it's sent to you.</p>
+ </div>
+</section>
+
+<section id="faq">
+ <div class="wrap" style="max-width:760px;margin:0 auto">
+  <h2>Questions</h2>
+  <details><summary>Is this legal advice?</summary><p>No. Our materials are general guidance to help you write down your own office rules. They aren't legal advice, and we don't promise compliance with any law or any insurance result. For legal questions, talk to your lawyer.</p></details>
+  <details><summary>Do you install anything or log in to our systems?</summary><p>No. We never log in, install, configure or monitor anything. Our cards show you where to check your own settings, and you, or your IT provider, make any changes.</p></details>
+  <details><summary>What data do you see?</summary><p>None for the AI Check. You fill it in yourself and keep it. If you'd like your top 3 fixes, send only the question numbers. If you buy the Kit, the intake asks about roles ("front desk", "bookkeeper"), not names. Never send us client files, ID numbers, banking details or passwords.</p></details>
+  <details><summary>Do we need a call or a meeting?</summary><p>No. Everything works by email. If you'd prefer a quick call, just ask.</p></details>
+  <details><summary>How do we pay?</summary><p>By Interac e-Transfer, up front. Work starts once the payment has cleared. We'll never ask you to pay by cheque, gift card or crypto, or to "send back the difference".</p></details>
+  <details><summary>Do you use AI to write the materials?</summary><p>Yes, AI tools help with drafting. A person reviews everything before it reaches you, and your client data never goes into them.</p></details>
+ </div>
+</section>
+
+<section id="contact">
+ <div class="wrap">
+  <div class="contact">
+   <h2>Start with the free AI Check</h2>
+   <p>Download it, take ten minutes, and keep the results. Questions, or want your top 3 fixes? Email:</p>
+   <p><a class="mail" href="mailto:accelerate@mail.grokbot.com?subject=AI%20Check">accelerate@mail.grokbot.com</a></p>
+   <div class="cta" style="margin-top:18px">
+    <a class="btn" href="AI-Check.pdf" download>Download the AI Check (PDF)</a>
+    <a class="btn ghost" href="mailto:accelerate@mail.grokbot.com?subject=AI%20Check">Email us</a>
+   </div>
+   <p class="note" style="color:#cfe3d9">We reply within 2 business days.</p>
+  </div>
+ </div>
+</section>
+
+<section class="alt terms" id="terms">
+ <div class="wrap" style="max-width:760px;margin:0 auto">
+  <h2>Terms and scope</h2>
+  <p class="note" style="margin-top:0">The short version of what you agree to when you buy. Version 2026-10-10.</p>
+  <ol>
+   <li><b>What we deliver.</b> Documents and training materials only, as listed in your proposal. Plans add the monthly notes, quarterly refreshes and email questions described in your plan.</li>
+   <li><b>What we never do.</b> Log in to, install on, configure or monitor your systems or staff; fill in, sign or attest to insurer, client or compliance forms; or work on-site. We don't serve health-information custodians.</li>
+   <li><b>Not legal advice. No guarantees.</b> Our materials are general guidance to help you set your own office rules. We don't promise compliance with any law, any insurance approval or premium, or that any incident will be prevented. You approve your final policy.</li>
+   <li><b>Your part.</b> Answer the intake using roles, not names. Don't send client files, ID numbers, banking details or passwords. If you do, we'll delete them and tell you. You make any settings changes yourself or through your IT provider.</li>
+   <li><b>Payment.</b> 100% up front by Interac e-Transfer. Work starts when the payment has cleared. Plans are prepaid monthly or yearly. No GST is charged while we're not GST-registered, and we'll give 30 days' notice if that changes.</li>
+   <li><b>Turnaround.</b> Your Kit arrives within 10 business days of your completed intake, with one round of changes before you approve it.</li>
+   <li><b>Refunds.</b> Starter Kit or Policy Upgrade: a full refund if you won't approve the draft after one round of changes, if you ask within 14 days of receiving it. After approval, or once staff materials are sent: no refund, but fixes are free for 30 days. Annual plans: unused full months are refunded in the first 60 days. Refunds go only to the original payment method.</li>
+   <li><b>Plans.</b> Cancel any time by email, effective at the end of the paid period. Pause up to 3 months a year. Prices are held for 12 months, with 60 days' notice of any change.</li>
+   <li><b>Liability.</b> Our total liability is limited to the fees you paid us in the 12 months before a claim. We aren't liable for indirect or consequential losses.</li>
+   <li><b>Your licence.</b> Use, edit and share the materials within your own organization. The templates remain ours.</li>
+   <li><b>Privacy.</b> We collect only what we need and delete it on schedule: intake answers 30 days after delivery, email questions 12 months after the thread closes, a minimal service log 24 months after you leave, and tax records for 6 years. If a privacy incident affects your information, we'll tell you promptly. You can also contact the OIPC Alberta (oipc.ab.ca) or the Office of the Privacy Commissioner of Canada (priv.gc.ca).</li>
+   <li><b>Complaints.</b> Email us. We acknowledge within 1 business day and aim to resolve within 5 business days, with a fix or a refund under these terms.</li>
+   <li><b>Law.</b> Alberta law applies. Clear Rules Cyber Security is operated by Branden Troutman, sole proprietor, Edmonton, Alberta.</li>
+  </ol>
+ </div>
+</section>
+</main>
+
+<footer>
+ <div class="wrap">
+  <div class="row">
+   <span>© 2026 Clear Rules Cyber Security · Edmonton, Alberta</span>
+   <span><a href="#terms">Terms and scope</a> · <a href="mailto:accelerate@mail.grokbot.com">accelerate@mail.grokbot.com</a></span>
+  </div>
+  <p style="margin:.8em 0 0">General guidance, not legal advice. No compliance or insurance outcome is promised. This site uses no cookies, trackers or analytics.</p>
+  <!-- MAILING ADDRESS: add the PO box here once Branden has it -->
+ </div>
+</footer>
+</body>
+</html>
