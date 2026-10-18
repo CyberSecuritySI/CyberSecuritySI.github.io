@@ -81,7 +81,9 @@ details p{margin:.6em 0 0;color:#38434f}
 footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:.9rem}
 footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 footer a{color:var(--muted)}
+.plans{display:grid;gap:18px}.plans .ticks li{font-size:.92rem}
 @media (min-width:760px){
+ .plans{grid-template-columns:repeat(3,1fr)}
  body{font-size:18px}
  h1{font-size:2.9rem}
  h2{font-size:1.85rem}
@@ -174,7 +176,7 @@ footer a{color:var(--muted)}
   <p class="eyebrow">After your Kit</p>
   <h2>Keep it current: monthly plans</h2>
   <p class="lead">AI tools change their features and data settings often. A plan keeps your rules up to date and your sign-off record dated, without you tracking it yourself. Plans start after a Starter Kit or Policy Upgrade.</p>
-  <div class="steps">
+  <div class="plans">
    <div class="price"><h3>Rules</h3><div class="big">CA$49 <small>/ month</small></div><p class="note" style="margin-top:.3em">or CA$490 / year · 2 to 8 staff</p>
     <ul class="ticks"><li>Monthly "what we checked" note on your tools</li><li>Quarterly policy refresh, new dated version</li><li>Sign-off record kept (versions, dates, counts)</li><li>New-hire pack, ready to send</li><li>1 email question thread a month</li></ul></div>
    <div class="price"><h3>Guarded</h3><div class="big">CA$99 <small>/ month</small></div><p class="note" style="margin-top:.3em">or CA$990 / year · up to 15 staff</p>
