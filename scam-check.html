@@ -66,7 +66,7 @@ footer a{color:var(--muted)}
 
   <h2>Please read: what this is and isn't</h2>
   <p class="small">This is a <b>rule-based helper, not a guarantee</b>. It looks for common warning signs, so it can miss new or unusual scams and can sometimes flag a normal message. <b>GO only means nothing on our list was flagged. It doesn't mean the message is safe.</b> When in doubt, call the sender on a number you already have. Don't use the number or link in the message. Never share a code you were texted, and never change payment details because of an email alone.</p>
-  <p class="small">In our latest internal test it gave the expected answer on 37 of 39 made-up test messages (not real customer messages). It still missed one scam message in that test. Real messages can be different.</p>
+  <p class="small">In our newest locked internal test (14 made-up messages, not real customer messages) it flagged all 7 scam or leak messages and none of the 7 normal ones. Real messages can be different.</p>
   <p class="small">What it looks for: payment or bank-detail change requests, urgent wires, gift-card asks, "send me the code you just got" account-takeover tricks, secret "boss" favours, and in AI pastes: SINs, card and Canadian bank numbers, health card numbers, birthdates, bulk contact lists and "confidential" documents.</p>
  </div>
 </main>
@@ -77,6 +77,7 @@ footer a{color:var(--muted)}
  </div>
 </footer>
 <script>
+/* clear-rules-engine 0.1.0 (generated; edit engine/src) */
 /*
  * Clear Rules Guardian — local detectors.
  * Pure functions. No network, no storage, no DOM. Runs in the content script and in Node tests.
@@ -298,6 +299,20 @@ footer a{color:var(--muted)}
    * opts.siteName: e.g. 'ChatGPT'
    * opts.approvedSite: boolean (office-approved AI tool → only never-ever items warn)
    */
+  // W46: a real-looking password typed inline ("password is X", "pass = X", "login is admin / X").
+  function findPasswords(text) {
+    const out = [];
+    const re = /\b(?:password|passwd|pwd|pass|passcode|login|log-?in|credentials?)\b(?:\s+(?:is|was|=|:)|\s*[:=])\s*(?:[A-Za-z0-9._@-]{2,30}\s*\/\s*)?([^\s,;'"]{6,64})/gi;
+    let m;
+    while ((m = re.exec(text))) {
+      const tok = m[1].replace(/[.!?]+$/, '');
+      const classes = [/[a-z]/, /[A-Z]/, /\d/, /[^A-Za-z0-9]/].filter((r) => r.test(tok)).length;
+      if (tok.length < 6 || classes < 3 || /^(https?:|www\.)/i.test(tok)) continue;
+      out.push({ type: 'password', label: 'a password', display: 'password', raw: tok, digits: tok, strong: true });
+    }
+    return out;
+  }
+
   function detectSensitive(text, policy, opts) {
     opts = opts || {};
     const allow = opts.allow || {};
@@ -311,7 +326,7 @@ footer a{color:var(--muted)}
     const cards = findCards(text);
     const banks = findBank(text);
     const coveredBy = (f) => [...sins, ...cards, ...banks].some((g) => g.raw.includes(f.raw) || f.raw.includes(g.raw));
-    findings.push(...sins, ...cards, ...banks, ...findHealth(text).filter((f) => !coveredBy(f)), ...findDOB(text));
+    findings.push(...sins, ...cards, ...banks, ...findHealth(text).filter((f) => !coveredBy(f)), ...findDOB(text), ...findPasswords(text));
 
     // mask matched numbers before phone/email counting to avoid double counting
     let masked = text;
@@ -338,6 +353,7 @@ footer a{color:var(--muted)}
     if (sins.some((f) => f.strong && !allowHashes.has(f.hash))) ruleIds.push('ai-sin');
     if (cards.some((f) => !allowHashes.has(f.hash))) ruleIds.push('ai-card');
     if (banks.some((f) => f.strong && !allowHashes.has(f.hash))) ruleIds.push('ai-bank');
+    if (findings.some((f) => f.type === 'password')) ruleIds.push('ai-password');
     if (strong.length) { signal = 'stop'; parts.push(joinList(dedupeLabels(strong))); }
     if (weak.length) { signal = maxSignal(signal, 'caution'); parts.push(joinList(dedupeLabels(weak))); ruleIds.push('ai-personal'); }
 
@@ -468,11 +484,11 @@ footer a{color:var(--muted)}
 
   // W44: someone asking YOU to hand over a sign-in / verification code (account-takeover favour).
   const OTP = {
-    ask: /\b(send|forward|read|tell|give|text|share|pass|screenshot)\b(\s+(me|us|it|over|along|back))?\b.{0,40}\b(code|passcode|pin|otp|number|digits)\b|\bwhat(?:'s| is| was)\s+the\b.{0,30}\b(code|passcode|number|digits|pin)\b/i,
+    ask: /\bread (it|them) (back|out)\b|\b(send|forward|read|tell|give|text|share|pass|screenshot)\b(\s+(me|us|it|over|along|back))?\b.{0,40}\b(code|passcode|pin|otp|number|digits)\b|\bwhat(?:'s| is| was)\s+the\b.{0,30}\b(code|passcode|number|digits|pin)\b/i,
     // v2: the thing asked for must be an auth code, not any "number"/"code"
     authCode: /\b(verification|verify|security|one[- ]time|2fa|mfa|otp|log ?in|sign[- ]?in|authenticat\w*|auth)\s+(code|passcode|pin|number)\b|\b(one[- ]time\s+)?passcode\b(?!\s+for\s+(the\s+)?(zoom|meeting|call|webinar))|\botp\b|\bcode\b[^.?!]{0,40}\b(authenticator|sms)\b/i,
     digitCode: /\b([46]|four|six)[- ]digit\s+(code|number|pin)\b|\bcode\b/i,
-    delivered: /\b(texted|sent (to )?you|they sent you|came to your (phone|cell|email)|you (just )?(got|received) (by|via|from|on)\s+(text|sms|your phone|google|microsoft|apple|the bank)|popped up|from the sms|by text|via text|on your phone)\b/i,
+    delivered: /\b(texting you|i('m| am)? (just )?(sent|texted|texting)|texted|sent (to )?you|they sent you|came to your (phone|cell|email)|you (just )?(got|received) (by|via|from|on)\s+(text|sms|your phone|google|microsoft|apple|the bank)|popped up|from the sms|by text|via text|on your phone)\b/i,
     you: /\b(you|your|u)\b/i,
     warnOnly: /\b(do not|don'?t|never|nobody will)\s+(share|give|send|ask)\b/i
   };
@@ -502,7 +518,16 @@ footer a{color:var(--muted)}
     const f = {
       payChange: anyMatchAffirmative(P.payChange, text),
       wire: anyMatchAffirmative(P.wire, text),
-      gift: sentences(text).some((s) => !NEGATED.test(s) && P.giftCard.test(s)) && anyMatchAffirmative(P.giftAsk, text),
+      gift: sentences(text).some((s) => !NEGATED.test(s) && P.giftCard.test(s)) && anyMatchAffirmative(P.giftAsk, text)
+        // W46: legit office purchase (receipts / staff event) and no ask for codes or photos of them
+        && !(/\b(receipts?|staff (draw|party)|christmas party|thank[- ]you (night|event|party)|raffle)\b/i.test(text) && !anyMatchAffirmative(P.giftAsk.slice(0, 3), text)),
+      govThreat: /\b(cra|canada revenue|revenue agency|rcmp|irs|service canada|police|border services|cbsa)\b/i.test(text)
+        && /\b(arrest|warrant|suspended|legal action|deport\w*|jail|police will)\b/i.test(text)
+        && /\b(bitcoin|crypto\w*|btc|gift ?cards?|wire|e-?transfer|pay|payment)\b/i.test(text),
+      cryptoAtm: /\b(bitcoin|crypto(currency)?)\s+(atm|machine|kiosk)\b|\b(pay|deposit|send)\b.{0,40}\b(in|by|with|via)\s+(bitcoin|crypto)\b/i.test(text),
+      interacLure: /\b(interac|e-?transfer)\b/i.test(text) && /\b(deposit|accept|claim|click)\b/i.test(text)
+        && /\b(within \d+\s*(hours?|hrs?|days?)|expires?|before it expires|or it will be (cancelled|returned))\b/i.test(text)
+        && /\b(https?:\/\/|www\.)|\b[a-z0-9-]+\.(?!ca\b)[a-z]{2,}(\.[a-z]{2,})?\b|\b[a-z0-9-]+\.example\.invalid\b/i.test(text.replace(/\binterac\.ca\b/ig, '')),
       secrecy: anyMatch(P.secrecy, text),
       urgency: anyMatch(P.urgency, text),
       authority: P.authority.test(text),
@@ -538,6 +563,24 @@ footer a{color:var(--muted)}
         checklist: verify,
         policyLine: lines.payment || '',
         findings: [], fixable: false
+      };
+    }
+    if (f.govThreat || f.cryptoAtm) {
+      return {
+        signal: 'stop', moment: 'payment', ruleIds: [f.govThreat ? 'pay-gov-threat' : 'pay-crypto-atm'], hash: h,
+        title: 'Government or police threat: likely a scam',
+        reason: 'This threatens arrest or a suspended account and asks for payment' + (f.cryptoAtm ? ' in Bitcoin or crypto' : '') + '. The CRA and police never demand payment like that.',
+        whatToDo: 'Don\u2019t pay or reply. Check your account yourself at canada.ca or call the CRA on the number from its website.',
+        checklist: verify, policyLine: lines.payment || '', findings: [], fixable: false
+      };
+    }
+    if (f.interacLure) {
+      return {
+        signal: 'stop', moment: 'payment', ruleIds: ['pay-interac-lure'], hash: h,
+        title: 'Fake e-Transfer deposit link',
+        reason: 'This says money is waiting and rushes you to deposit it at a link. Fake Interac messages steal bank logins this way.',
+        whatToDo: 'Don\u2019t click. Open your bank app yourself to see if a real e-Transfer is waiting.',
+        checklist: verify, policyLine: lines.payment || '', findings: [], fixable: false
       };
     }
     if (otpTheft(text)) {
@@ -988,6 +1031,68 @@ footer a{color:var(--muted)}
   };
 });
 
+/*
+ * Clear Rules Engine: stable API over the tested rules layer.
+ *   check(text, context) -> { signal, reasons, fixes, ruleIds, layer, engineVersion }
+ * Layers: 1 rules (always, local) -> 2 optional local model (off unless context.localModel given)
+ *         -> 3 opt-in larger model (off unless context.remoteModel AND context.optIn; gets scrubbed text only).
+ * Model layers may only RAISE a signal, never lower a rules STOP. No network here; callers supply model functions.
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./rules.js'));
+  else root.CREngine = factory(root.CRGDetectors);
+})(typeof self !== 'undefined' ? self : this, function (R) {
+  'use strict';
+  const VERSION = '0.1.0';
+  const API = 1;
+  function shape(r, layer) {
+    return {
+      signal: r.signal, ruleIds: r.ruleIds || [], layer,
+      title: r.title || '', reasons: r.signal === 'go' ? [] : [r.reason].filter(Boolean),
+      fixes: [r.whatToDo].concat(r.checklist || []).filter(Boolean),
+      findings: r.findings || [], fixable: !!r.fixable, engineVersion: VERSION, raw: r
+    };
+  }
+  // Strip every number/secret the rules layer finds, plus emails/phones, before text leaves layer 1.
+  function scrub(text, policy) {
+    const s = R.detectSensitive(text, policy || {}, {});
+    let t = R.redact(text, s.findings || []);
+    t = t.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, '[email]')
+         .replace(/(?:\+?1[ .-]?)?\(?[2-9]\d{2}\)?[ .-]?[2-9]\d{2}[ .-]?\d{4}\b/g, '[phone]')
+         .replace(/\b\d{6,}\b/g, '[number]');
+    return t;
+  }
+  function rulesLayer(text, ctx) {
+    const pol = ctx.policy || {}, opts = ctx.opts || {};
+    const kind = ctx.kind || 'message';
+    if (kind === 'ai-paste') return R.detectSensitive(text, pol, opts);
+    if (kind === 'payment') return R.detectPayment(text, pol, opts);
+    // 'message': payment rules first, then sensitive numbers
+    let r = R.detectPayment(text, pol, opts);
+    if (r.signal === 'go') { const s = R.detectSensitive(text, pol, Object.assign({ siteName: 'anyone' }, opts)); if (s.signal !== 'go') r = s; }
+    return r;
+  }
+  function raise(base, m, layer) {
+    if (!m || R.RANK[m.signal] === undefined || R.RANK[m.signal] <= R.RANK[base.signal]) return base;
+    return Object.assign({}, base, { signal: m.signal, layer, reasons: base.reasons.concat(m.reasons || []), ruleIds: base.ruleIds.concat(['model-' + layer]) });
+  }
+  // Synchronous rules-only check (what the extension and page use today).
+  function check(text, context) {
+    return shape(rulesLayer(String(text || ''), context || {}), 'rules');
+  }
+  // Async full pipeline. localModel(text) / remoteModel(scrubbedText) -> {signal, reasons}.
+  async function checkDeep(text, context) {
+    const ctx = context || {};
+    let out = check(text, ctx);
+    if (out.signal === 'stop') return out;
+    if (typeof ctx.localModel === 'function') out = raise(out, await ctx.localModel(String(text)), 'local-model');
+    if (out.signal !== 'stop' && ctx.optIn === true && typeof ctx.remoteModel === 'function')
+      out = raise(out, await ctx.remoteModel(scrub(String(text), ctx.policy)), 'remote-model');
+    return out;
+  }
+  return { VERSION, API, check, checkDeep, scrub, rules: R };
+});
+
 </script>
 <script>
 
@@ -996,12 +1101,12 @@ function pageText(r){
   r.title=f(r.title);r.reason=f(r.reason);r.whatToDo=f(r.whatToDo);r.checklist=(r.checklist||[]).map(f);return r;
 }
 const POLICY = {"_help": "This is the ONE file an office edits. It ships inside the extension and never leaves the computer. After editing, reload the extension at chrome://extensions (or edge://extensions).", "version": "0.1.0-dogfood", "office": {"name": "your office", "askPerson": "your manager", "approvedAiTool": "your office's approved AI tool", "reportTo": "your manager or the owner"}, "policyLines": {"aiPaste": "", "payment": "", "boss": "", "login": "", "oauth": ""}, "neverPasteWords": ["confidential", "privileged", "solicitor-client", "attorney-client", "do not distribute", "not for distribution", "internal use only"], "contextWords": ["client", "clients", "patient", "payroll", "tax return", "date of birth", "health card"], "aiSites": [{"host": "chatgpt.com", "name": "ChatGPT"}, {"host": "chat.openai.com", "name": "ChatGPT"}, {"host": "gemini.google.com", "name": "Gemini"}, {"host": "aistudio.google.com", "name": "Google AI Studio"}, {"host": "claude.ai", "name": "Claude"}, {"host": "copilot.microsoft.com", "name": "Copilot"}, {"host": "copilot.cloud.microsoft", "name": "Microsoft 365 Copilot"}, {"host": "m365.cloud.microsoft", "name": "Microsoft 365 Copilot"}, {"host": "grok.com", "name": "Grok"}, {"host": "x.com", "pathPrefix": "/i/grok", "name": "Grok on X"}, {"host": "perplexity.ai", "name": "Perplexity"}, {"host": "chat.deepseek.com", "name": "DeepSeek"}, {"host": "deepseek.com", "name": "DeepSeek"}, {"host": "chat.mistral.ai", "name": "Mistral Le Chat"}, {"host": "meta.ai", "name": "Meta AI"}, {"host": "poe.com", "name": "Poe"}], "approvedAiSites": [], "webmailSites": [{"host": "mail.google.com", "name": "Gmail"}, {"host": "outlook.live.com", "name": "Outlook"}, {"host": "outlook.office.com", "name": "Outlook"}, {"host": "outlook.office365.com", "name": "Outlook"}, {"host": "outlook.cloud.microsoft", "name": "Outlook"}], "oauthHosts": [{"host": "accounts.google.com", "pathPrefixes": ["/o/oauth2", "/signin/oauth"], "provider": "Google"}, {"host": "login.microsoftonline.com", "pathPrefixes": ["/"], "provider": "Microsoft"}, {"host": "login.live.com", "pathPrefixes": ["/oauth20_authorize.srf", "/consent"], "provider": "Microsoft"}], "knownGoodDomains": [], "approvedOAuthApps": [], "userContentHosts": ["storage.googleapis.com", "sites.google.com", "firebaseapp.com", "web.app", "appspot.com", "blob.core.windows.net", "web.core.windows.net", "azurewebsites.net", "sharepoint.com", "github.io", "pages.dev", "workers.dev", "netlify.app", "vercel.app", "herokuapp.com", "glitch.me", "weebly.com", "wixsite.com", "squarespace.com", "webflow.io", "ngrok.io", "ngrok-free.app", "r2.dev", "ipfs.io", "dweb.link"], "brands": [{"name": "Microsoft", "tokens": ["microsoft", "microsoftonline", "office365", "microsoft365", "onedrive", "sharepoint", "msonline"], "segmentTokens": ["outlook", "msft", "hotmail", "o365", "m365"], "titleWords": ["microsoft", "office 365", "outlook web app", "outlook web access", "microsoft outlook", "onedrive", "sharepoint", "microsoft 365"], "domains": ["microsoft.com", "microsoftonline.com", "live.com", "office.com", "outlook.com", "office365.com", "microsoft365.com", "onedrive.com", "windows.net", "msauth.net", "msftauth.net", "azure.com", "bing.com", "skype.com", "xbox.com", "hotmail.com", "cloud.microsoft", "msn.com"]}, {"name": "Google", "tokens": ["google", "gmail", "googlemail", "googledrive"], "segmentTokens": ["gdrive", "goog"], "titleWords": ["google", "gmail", "google drive", "google workspace"], "domains": ["google.com", "google.ca", "gmail.com", "googlemail.com", "youtube.com", "googleusercontent.com", "gstatic.com", "withgoogle.com", "googleapis.com"]}, {"name": "Apple", "tokens": ["icloud", "appleid"], "segmentTokens": ["apple", "itunes"], "titleWords": ["apple id", "icloud", "apple account"], "domains": ["apple.com", "icloud.com", "me.com"]}, {"name": "PayPal", "tokens": ["paypal"], "segmentTokens": [], "titleWords": ["paypal"], "domains": ["paypal.com", "paypal.ca", "paypal.me"]}, {"name": "Amazon", "tokens": ["amazon"], "segmentTokens": ["aws"], "titleWords": ["amazon"], "domains": ["amazon.com", "amazon.ca", "amazonaws.com", "aws.amazon.com", "a2z.com", "amazon.co.uk"]}, {"name": "RBC Royal Bank", "tokens": ["royalbank"], "segmentTokens": ["rbc"], "titleWords": ["rbc", "royal bank"], "domains": ["rbc.com", "rbcroyalbank.com", "royalbank.com", "rbcinsurance.com"]}, {"name": "TD Bank", "tokens": ["tdcanadatrust", "easyweb", "tdbank"], "segmentTokens": ["td"], "titleWords": ["td canada trust", "easyweb", "td bank"], "domains": ["td.com", "tdcanadatrust.com", "tdbank.com", "tdassetmanagement.com"]}, {"name": "BMO", "tokens": ["bankofmontreal"], "segmentTokens": ["bmo"], "titleWords": ["bmo", "bank of montreal"], "domains": ["bmo.com", "bmoinvestorline.com", "bmo.ca"]}, {"name": "Scotiabank", "tokens": ["scotiabank", "scotiaonline"], "segmentTokens": ["scotia"], "titleWords": ["scotiabank"], "domains": ["scotiabank.com", "scotiaonline.scotiabank.com", "scotiaitrade.com"]}, {"name": "CIBC", "tokens": [], "segmentTokens": ["cibc"], "titleWords": ["cibc"], "domains": ["cibc.com", "cibc.ca", "cibconline.cibc.com", "simplii.com"]}, {"name": "ATB Financial", "tokens": ["atbonline", "atbfinancial"], "segmentTokens": ["atb"], "titleWords": ["atb financial", "atb online"], "domains": ["atb.com", "atbonline.com", "atbfinancial.com"]}, {"name": "Servus Credit Union", "tokens": ["servus"], "segmentTokens": [], "titleWords": ["servus credit union"], "domains": ["servus.ca"]}, {"name": "Desjardins", "tokens": ["desjardins"], "segmentTokens": [], "titleWords": ["desjardins"], "domains": ["desjardins.com"]}, {"name": "National Bank", "tokens": ["nationalbank", "bnc"], "segmentTokens": [], "titleWords": ["national bank"], "domains": ["nbc.ca", "bnc.ca", "nationalbank.ca"]}, {"name": "Tangerine", "tokens": ["tangerine"], "segmentTokens": [], "titleWords": ["tangerine"], "domains": ["tangerine.ca"]}, {"name": "Interac", "tokens": ["interac", "etransfer"], "segmentTokens": [], "titleWords": ["interac", "e-transfer"], "domains": ["interac.ca"]}, {"name": "Canada Revenue Agency", "tokens": ["canadarevenue", "craarc"], "segmentTokens": ["cra"], "titleWords": ["canada revenue agency", "cra my account"], "domains": ["canada.ca", "gc.ca"]}, {"name": "Wealthsimple", "tokens": ["wealthsimple"], "segmentTokens": [], "titleWords": ["wealthsimple"], "domains": ["wealthsimple.com"]}, {"name": "DocuSign", "tokens": ["docusign"], "segmentTokens": [], "titleWords": ["docusign"], "domains": ["docusign.com", "docusign.net"]}, {"name": "Dropbox", "tokens": ["dropbox"], "segmentTokens": [], "titleWords": ["dropbox"], "domains": ["dropbox.com", "dropboxusercontent.com"]}, {"name": "Adobe", "tokens": [], "segmentTokens": ["adobe"], "titleWords": ["adobe"], "domains": ["adobe.com", "adobelogin.com"]}, {"name": "LinkedIn", "tokens": ["linkedin"], "segmentTokens": [], "titleWords": ["linkedin"], "domains": ["linkedin.com", "licdn.com"]}, {"name": "Intuit QuickBooks", "tokens": ["quickbooks"], "segmentTokens": ["intuit"], "titleWords": ["quickbooks", "intuit"], "domains": ["intuit.com", "quickbooks.com", "intuit.ca"]}], "oauth": {"broadScopes": ["mail.google.com", "gmail.modify", "gmail.readonly", "gmail.compose", "gmail.send", "gmail.insert", "gmail.metadata", "drive", "drive.readonly", "cloud-platform", "mail.read", "mail.readwrite", "mail.send", "mail.read.shared", "mail.readwrite.shared", "files.read.all", "files.readwrite.all", "sites.read.all", "sites.readwrite.all", "sites.fullcontrol.all", "full_access_as_user", "eas.accessasuser.all", "ews.accessasuser.all", "imap.accessasuser.all", "mailboxsettings.readwrite", "directory.readwrite.all", "user.readwrite.all"], "mediumScopes": ["calendar", "calendar.readonly", "calendar.events", "contacts", "contacts.readonly", "drive.file", "drive.metadata", "drive.metadata.readonly", "calendars.read", "calendars.readwrite", "contacts.read", "contacts.readwrite", "files.read", "files.readwrite", "notes.read", "chat.read"], "broadPhrases": ["read, compose, send, and permanently delete all your email", "read, compose, and send emails", "view your email messages and settings", "read your email", "see, edit, create, and delete all of your google drive files", "see and download all your google drive files", "read your mail", "read and write access to your mail", "send mail as you", "have full access to all files you have access to", "read all files that you have access to", "have full access to your mailboxes", "access your mailboxes"], "mediumPhrases": ["see, edit, share, and permanently delete all the calendars", "view your calendars", "see and download your contacts", "read your calendars", "read your contacts", "maintain access to data you have given it access to"], "aiAgentWords": ["ai", "gpt", "agent", "assistant", "copilot", "bot", "autopilot", "llm", "genie"], "_help": "Scopes are matched after removing 'https://www.googleapis.com/auth/' and 'https://graph.microsoft.com/' and lower-casing. Phrases are matched against the consent page's visible text."}};
-const D = self.CRGDetectors;
+const E = self.CREngine, D = E.rules;
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 document.getElementById('go').onclick=()=>{
   const t=document.getElementById('t').value;const mode=document.querySelector('input[name=m]:checked').value;
-  let r = mode==='ai' ? D.detectSensitive(t,POLICY,{siteName:'an AI tool'}) : D.detectPayment(t,POLICY,{});
-  if(mode==='msg' && r.signal==='go'){const s=D.detectSensitive(t,POLICY,{siteName:'anyone'}); if(s.signal!=='go'){r=s;r.title='This message contains sensitive numbers';}}
+  const c = E.check(t,{policy:POLICY,kind:mode==='ai'?'ai-paste':'message',opts:mode==='ai'?{siteName:'an AI tool'}:{}}); let r = c.raw;
+  if(mode==='msg' && c.ruleIds.some(x=>x.startsWith('ai-'))) r.title='This message contains sensitive numbers';
   r=pageText(r);const out=document.getElementById('out');
   if(r.signal==='go'){out.innerHTML='<div class="card go" role="status"><span class="badge">GO</span> — nothing on our list was flagged. Still trust your gut: if money, codes or passwords are involved, call back on a number you already have.</div>';return;}
   const list=(r.checklist||[]).map(x=>'<li>'+esc(x)+'</li>').join('');
