@@ -529,6 +529,14 @@ footer a{color:var(--muted)}
         && /\b(within \d+\s*(hours?|hrs?|days?)|expires?|before it expires|or it will be (cancelled|returned))\b/i.test(text)
         && /\b(https?:\/\/|www\.)|\b[a-z0-9-]+\.(?!ca\b)[a-z]{2,}(\.[a-z]{2,})?\b|\b[a-z0-9-]+\.example\.invalid\b/i.test(text.replace(/\binterac\.ca\b/ig, '')),
       secrecy: anyMatch(P.secrecy, text),
+      // W47: credential-harvest lure: asks you to sign in / re-enter / confirm a login, card, banking or ID detail AT A LINK, with pressure.
+      credHarvest: (() => {
+        const t2 = text.replace(/\b(canada\.ca|interac\.ca)\b/ig, '');
+        const link = /\b(https?:\/\/|www\.)|\b[a-z0-9-]+\.(com|net|org|info|xyz|top|online|site|app|io|co|example\.invalid)\b|\b[a-z0-9-]+\.example\.invalid\b/i.test(t2);
+        const act = /\b(sign[- ]?in|log[- ]?in|re-?enter|confirm|verify|update|enter|provide|validate)\b.{0,60}\b(password|username|login|credentials|card (number|details)|card number|date of birth|dob|banking|billing (details|info)|account (details|info)|member number|health card|sin)\b|\b(sign|log) in\b.{0,25}\b(at|here|via|using|with)\b/i.test(t2);
+        const pressure = /\b(today|now|immediately|asap|within \d+\s*(hours?|hrs?|days?)|expires?|expir\w+|suspend\w*|locked|lose|losing|stop|failed|could not|unable|avoid|release|final notice|to complete|to view it|to keep)\b/i.test(t2);
+        return link && act && pressure;
+      })(),
       urgency: anyMatch(P.urgency, text),
       authority: P.authority.test(text),
       opener: P.opener.test(text),
@@ -580,6 +588,15 @@ footer a{color:var(--muted)}
         title: 'Fake e-Transfer deposit link',
         reason: 'This says money is waiting and rushes you to deposit it at a link. Fake Interac messages steal bank logins this way.',
         whatToDo: 'Don\u2019t click. Open your bank app yourself to see if a real e-Transfer is waiting.',
+        checklist: verify, policyLine: lines.payment || '', findings: [], fixable: false
+      };
+    }
+    if (f.credHarvest) {
+      return {
+        signal: 'stop', moment: 'payment', ruleIds: ['pay-cred-harvest'], hash: h,
+        title: 'Fake sign-in request',
+        reason: 'This rushes you to sign in or type a password, card or ID detail at a link. That is how fake bank, health and email messages steal logins.',
+        whatToDo: 'Don\u2019t click. Open the app or type the real website address yourself to check.',
         checklist: verify, policyLine: lines.payment || '', findings: [], fixable: false
       };
     }
